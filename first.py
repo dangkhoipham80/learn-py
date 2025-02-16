@@ -40,12 +40,8 @@ print(float(age))
 print(bool(name))
 
 # input() = A function that prompts the user to enter data
-<<<<<<< HEAD
-#           Returns the entered data as a string
-=======
 #           Returns the entered data as a string
 
 full_name = input("What is your name?: ")
 birth = int(input("What is your birth year?; "))
 print(f"Hello {full_name}")
->>>>>>> 479eaea (3 exercises)
