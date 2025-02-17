@@ -67,7 +67,7 @@ if not has_insurance:
 #                           X if condition else Y
 num = 6
 a = 5
-b =4
+b = 4
 
 print("Positive" if num > 0 else "Negative")
 
