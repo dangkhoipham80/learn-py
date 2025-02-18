@@ -27,6 +27,32 @@ print(zoo)
 print(zoo[0:3])
 """
 
+"""
 # Booleans and Operators
 like_coffee = True
-like_
+like_tea = False
+print(type(like_coffee))
+
+print(1 == 2)
+"""
+
+# if-else
+
+# loops: For & While
+
+"""
+my_list = [1, 2, 3, 4, 5]
+
+for iterator in my_list:
+    print(iterator)
+
+for x in range(-5, -3):
+    print(x)
+
+i = 0
+while i < 5:
+    i += 1
+    print(i)
+
+# continue, break;
+"""
