@@ -3,4 +3,4 @@ from vehicle import *
 
 engine = Engine("V6")
 vehicle = Vehicle("Car", True, engine)
-vehicle.engine.startEngine()
+vehicle.engine.startEngine() # composition HAS-A
