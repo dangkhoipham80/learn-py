@@ -99,7 +99,7 @@ def find_book_id(book: Book):
     return book
 
 # need id
-@app.put("/update-book", status_code=status.HTTP_204_NO_CONTENT)
+@app.put("/update-book/", status_code=status.HTTP_204_NO_CONTENT)
 async def update_book(update_book_request: BookRequest):
     book_changed = False
     for i in range(len(BOOKS)):
