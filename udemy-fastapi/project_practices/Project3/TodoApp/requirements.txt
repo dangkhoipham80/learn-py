@@ -1,4 +1,8 @@
 fastapi
-bcrypt==4.0.1
+bcrypt
 python-multipart
-"python-jose[cryptography]""
+python-jose[cryptography]
+sqlalchemy
+starlette
+pydantic
+passlib

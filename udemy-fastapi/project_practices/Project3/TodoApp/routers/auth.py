@@ -19,7 +19,7 @@ SECRET_KEY = "bf21c4c88108ac4998591c2a53fb01759c276c9ee661b20d31f67a375f3d31b0"
 ALGORITHM = "HS256"
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 class CreateUserRequest(BaseModel):
     username: str
@@ -42,14 +42,29 @@ class CreateUserRequest(BaseModel):
         }
     }
 
-class Token(BaseModel):
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    email: str
+    first_name: str
+    last_name: str
+    is_active: bool
+    role: str
+
+    class Config:
+        from_attributes = True
+
+class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+
+    class Config:
+        from_attributes = True
 
 def get_db():
     db = SessionLocal()
     try:
-        yield db # return
+        yield db
     finally:
         db.close()
 
@@ -63,12 +78,12 @@ def authenticate_user(db, username: str, password: str):
         return False
     return user
 
-def create_access_token(username: str, user_id: int, expire_delta: timedelta):
+def create_access_token(username: str, user_id: int, expires_delta: timedelta):
     encode = {
         "sub": username,
         "id": user_id
     }
-    expires = datetime.now(timezone.utc) + expire_delta
+    expires = datetime.now(timezone.utc) + expires_delta
     encode.update({"exp": expires})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -88,9 +103,8 @@ async def get_current_user(token: str = Annotated[str, Depends(oauth2_bearer)]):
 async def read_all_users(db: db_dependency):
     return db.query(Users).all()
 
-@router.post("/auth", status_code=status.HTTP_201_CREATED)
-async def create_user(db: db_dependency,
-                      create_user_request: CreateUserRequest):
+@router.post("/", status_code=status.HTTP_201_CREATED)
+async def create_user(db: db_dependency, create_user_request: CreateUserRequest):
     create_user_model = Users(
         username=create_user_request.username,
         email=create_user_request.email,
@@ -103,11 +117,15 @@ async def create_user(db: db_dependency,
 
     db.add(create_user_model)
     db.commit()
+    db.refresh(create_user_model)
 
-@router.post("/token", response_model=Token)
+    return UserResponse.model_validate(create_user_model)
+
+@router.post("/token", response_model=TokenResponse)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=401, detail='Invalid credentials')
-    token = create_access_token(form_data.username, 1, timedelta(minutes=20))
-    return {"access_token": token, "token_type": "bearer"}
+    token = create_access_token(form_data.username, user.id, timedelta(minutes=20))
+
+    return TokenResponse.model_validate({"access_token": token, "token_type": "bearer"})
