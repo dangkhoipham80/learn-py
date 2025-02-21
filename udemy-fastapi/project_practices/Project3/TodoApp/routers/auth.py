@@ -10,10 +10,7 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 
-router = APIRouter(
-    prefix="/auth",
-    tags=["auth"]
-)
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 SECRET_KEY = "bf21c4c88108ac4998591c2a53fb01759c276c9ee661b20d31f67a375f3d31b0"
 ALGORITHM = "HS256"
@@ -122,7 +119,7 @@ async def create_user(db: db_dependency, create_user_request: CreateUserRequest)
     return UserResponse.model_validate(create_user_model)
 
 @router.post("/token", response_model=TokenResponse)
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends(oauth2_bearer)], db: db_dependency):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=401, detail='Invalid credentials')
