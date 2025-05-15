@@ -22,3 +22,14 @@ Tạo lớp cơ sở cho các mô hình ORM
 Base = declarative_base()
 Base là lớp cơ sở từ declarative_base() của SQLAlchemy.
 -> Khi bạn định nghĩa model như User, Todo,... thì bạn sẽ kế thừa từ Base.
+
+>insert into todos (title, description, priority, complete) values ('Go to the store', 'Pick an egg', 5, False);
+...>;
+>select * from todos;
+>insert into todos (title, description, priority, complete) values ('Go to the store 2', 'Pick an fish', 3, True);
+
+>.mode column
+
+>.mode box
+
+>.mode table
